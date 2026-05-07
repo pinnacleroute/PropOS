@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PropOS — Enterprise Real Estate CRM + ERP</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sidebar-w:228px;
+  --hdr:52px;
+  --c-bg:#0f1117;
+  --c-surface:#181c27;
+  --c-card:#1e2336;
+  --c-card2:#232840;
+  --c-border:#2a3050;
+  --c-border2:#363f66;
+  --c-text:#e8eaf6;
+  --c-muted:#8892b0;
+  --c-accent:#4f7cff;
+  --c-accent2:#6c63ff;
+  --c-green:#22c55e;
+  --c-amber:#f59e0b;
+  --c-red:#ef4444;
+  --c-teal:#14b8a6;
+  --c-pink:#ec4899;
+  --c-purple:#a855f7;
+  --font:'IBM Plex Sans',system-ui,sans-serif;
+  --radius:8px;
+  --radius-lg:12px;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--c-bg);color:var(--c-text);font-family:var(--font);font-size:13px}
+button{cursor:pointer;font-family:var(--font)}
+input,select,textarea{font-family:var(--font)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--c-border2);border-radius:4px}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);background:var(--c-surface);border-right:1px solid var(--c-border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sidebar-logo{padding:15px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--c-border)}
+.logo-mark{width:30px;height:30px;background:linear-gradient(135deg,#4f7cff,#a855f7);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0}
+.logo-name{font-size:16px;font-weight:700;letter-spacing:-.4px}
+.logo-ver{font-size:10px;color:var(--c-muted)}
+.sidebar-section{padding:14px 14px 4px;font-size:10px;font-weight:700;color:var(--c-muted);letter-spacing:.9px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 13px;margin:1px 7px;border-radius:7px;cursor:pointer;color:var(--c-muted);transition:all .15s;font-size:12.5px;position:relative}
+.nav-item:hover{background:var(--c-card);color:var(--c-text)}
+.nav-item.active{background:rgba(79,124,255,.14);color:var(--c-accent)}
+.nav-item.active::before{content:'';position:absolute;left:-7px;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--c-accent);border-radius:0 3px 3px 0}
+.nav-item i{font-size:15px;width:18px;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:10px;padding:1px 7px;border-radius:99px;font-weight:700}
+.badge-red{background:var(--c-red);color:#fff}
+.badge-amber{background:var(--c-amber);color:#111}
+.badge-green{background:var(--c-green);color:#fff}
+.sidebar-footer{margin-top:auto;border-top:1px solid var(--c-border);padding:10px 7px}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:var(--hdr);background:var(--c-surface);border-bottom:1px solid var(--c-border);display:flex;align-items:center;padding:0 22px;gap:12px;flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:600;flex:1}
+.tb-btn{background:var(--c-card);border:1px solid var(--c-border);color:var(--c-text);padding:5px 13px;border-radius:7px;display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;transition:border-color .15s}
+.tb-btn:hover{border-color:var(--c-accent)}
+.role-pill{background:rgba(79,124,255,.18);color:var(--c-accent);font-size:11px;padding:4px 12px;border-radius:99px;font-weight:700;white-space:nowrap}
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0;background:linear-gradient(135deg,#4f7cff,#a855f7)}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:22px 24px}
+
+/* ── KPI CARDS ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:13px;margin-bottom:20px}
+.kpi-card{background:var(--c-card);border:1px solid var(--c-border);border-radius:var(--radius-lg);padding:15px}
+.kpi-label{font-size:11px;color:var(--c-muted);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.kpi-value{font-size:23px;font-weight:700}
+.kpi-trend{font-size:11px;margin-top:4px;display:flex;align-items:center;gap:3px}
+.trend-up{color:var(--c-green)}
+.trend-down{color:var(--c-red)}
+
+/* ── PANELS ── */
+.panel{background:var(--c-card);border:1px solid var(--c-border);border-radius:var(--radius-lg);padding:17px}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}
+.panel-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.panel-action{font-size:11px;color:var(--c-accent);background:none;border:none;cursor:pointer}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.mb-16{margin-bottom:16px}
+
+/* ── BUTTONS ── */
+.btn{border:none;padding:7px 15px;border-radius:7px;font-weight:600;font-size:12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;transition:all .15s}
+.btn-primary{background:var(--c-accent);color:#fff}
+.btn-primary:hover{background:#3d6dff}
+.btn-ghost{background:transparent;border:1px solid var(--c-border2);color:var(--c-muted)}
+.btn-ghost:hover{border-color:var(--c-accent);color:var(--c-accent)}
+.btn-success{background:rgba(34,197,94,.15);color:var(--c-green);border:1px solid rgba(34,197,94,.3)}
+.btn-danger{background:rgba(239,68,68,.15);color:var(--c-red);border:1px solid rgba(239,68,68,.3)}
+.btn-sm{padding:4px 10px;font-size:11px}
+
+/* ── TABLES ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:400px}
+th{font-size:11px;font-weight:700;color:var(--c-muted);text-align:left;padding:7px 9px;border-bottom:1px solid var(--c-border);white-space:nowrap}
+td{font-size:12px;padding:8px 9px;border-bottom:1px solid var(--c-border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(255,255,255,.018)}
+
+/* ── BADGES / TAGS ── */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;white-space:nowrap}
+.badge-hot{background:rgba(239,68,68,.18);color:#f87171}
+.badge-warm{background:rgba(245,158,11,.18);color:#fbbf24}
+.badge-cold{background:rgba(96,165,250,.18);color:#93c5fd}
+.badge-source{background:rgba(79,124,255,.14);color:var(--c-accent);border:1px solid rgba(79,124,255,.2)}
+.badge-stage{background:var(--c-surface);border:1px solid var(--c-border2);color:var(--c-muted)}
+.badge-ok{background:rgba(34,197,94,.14);color:var(--c-green)}
+.badge-warn{background:rgba(245,158,11,.14);color:var(--c-amber)}
+.badge-err{background:rgba(239,68,68,.14);color:var(--c-red)}
+.badge-info{background:rgba(79,124,255,.14);color:var(--c-accent)}
+.badge-purple{background:rgba(168,85,247,.14);color:var(--c-purple)}
+
+/* ── LEAD CARDS ── */
+.lead-card{background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius);padding:13px;margin-bottom:9px;cursor:pointer;transition:border-color .15s}
+.lead-card:hover{border-color:var(--c-accent)}
+.lead-name{font-weight:700;font-size:13px}
+.score-bar-wrap{flex:1;height:4px;background:var(--c-border);border-radius:2px;overflow:hidden}
+.score-bar{height:100%;border-radius:2px;background:linear-gradient(90deg,#4f7cff,#a855f7)}
+.lead-meta{font-size:11px;color:var(--c-muted);display:flex;gap:14px;flex-wrap:wrap}
+
+/* ── ALERT BANNER ── */
+.alert{border-radius:var(--radius);padding:10px 14px;display:flex;gap:9px;align-items:center;font-size:12px;margin-bottom:14px}
+.alert-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.28);color:var(--c-amber)}
+.alert-danger{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.28);color:var(--c-red)}
+.alert-info{background:rgba(79,124,255,.1);border:1px solid rgba(79,124,255,.28);color:var(--c-accent)}
+.alert-success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.28);color:var(--c-green)}
+
+/* ── FUNNEL ── */
+.funnel-bar{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.funnel-label{width:118px;font-size:11px;color:var(--c-muted);text-align:right;flex-shrink:0}
+.funnel-fill{height:23px;border-radius:5px;display:flex;align-items:center;padding:0 9px;font-size:11px;font-weight:700;color:#fff;min-width:36px;transition:width .6s}
+
+/* ── TIMELINE ── */
+.tl-item{display:flex;gap:11px;margin-bottom:13px;position:relative}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:11px;top:23px;bottom:-13px;width:1px;background:var(--c-border)}
+.tl-dot{width:23px;height:23px;border-radius:50%;background:var(--c-card);border:2px solid var(--c-accent);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;z-index:1}
+.tl-body{flex:1;background:var(--c-surface);border:1px solid var(--c-border);border-radius:7px;padding:8px 11px}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--c-surface);border:1px solid var(--c-border2);border-radius:14px;width:min(540px,100%);max-height:88vh;overflow-y:auto;padding:24px}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;color:var(--c-muted);font-size:20px;cursor:pointer;line-height:1}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-label{font-size:11px;color:var(--c-muted);font-weight:600}
+.form-input{background:var(--c-card);border:1px solid var(--c-border);border-radius:7px;padding:7px 11px;color:var(--c-text);font-size:12px;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--c-accent)}
+select.form-input option{background:var(--c-card)}
+
+/* ── PROGRESS ── */
+.prog-wrap{background:var(--c-border);height:5px;border-radius:3px;overflow:hidden;margin-top:5px}
+.prog-fill{height:100%;border-radius:3px;transition:width .6s}
+
+/* ── NOTIF ITEMS ── */
+.notif-item{display:flex;gap:10px;align-items:flex-start;background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius);padding:10px 12px;margin-bottom:7px}
+.notif-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+
+/* ── CHAT ── */
+.chat-wrap{display:flex;flex-direction:column;gap:3px;max-height:290px;overflow-y:auto;padding:4px 0}
+.chat-bubble{max-width:78%;padding:9px 13px;border-radius:12px;margin-bottom:4px;font-size:12px;line-height:1.55}
+.chat-in{background:#1e2f3e;border-radius:12px 12px 12px 3px;align-self:flex-start}
+.chat-out{background:rgba(37,211,102,.15);border:1px solid rgba(37,211,102,.28);color:#4ade80;border-radius:12px 12px 3px 12px;align-self:flex-end}
+.chat-sys{background:rgba(79,124,255,.1);border:1px solid rgba(79,124,255,.2);color:var(--c-accent);border-radius:8px;align-self:flex-start;font-size:11px}
+.chat-time{font-size:10px;color:var(--c-muted);margin-top:2px}
+
+/* ── INVENTORY ── */
+.inv-unit{border-radius:5px;font-size:9px;font-weight:700;cursor:pointer;text-align:center;padding:5px 2px;border:1px solid transparent;transition:transform .12s}
+.inv-unit:hover{transform:scale(1.18);z-index:5;position:relative}
+.u-avail{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.4);color:#4ade80}
+.u-hold{background:rgba(245,158,11,.18);border-color:rgba(245,158,11,.4);color:#fbbf24}
+.u-soft{background:rgba(168,85,247,.16);border-color:rgba(168,85,247,.4);color:#c084fc}
+.u-booked{background:rgba(79,124,255,.18);border-color:rgba(79,124,255,.4);color:#818cf8}
+.u-sold{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.3);color:#f87171}
+
+/* ── AI CARDS ── */
+.ai-card{border-radius:10px;padding:14px;margin-bottom:10px;background:linear-gradient(135deg,rgba(79,124,255,.07),rgba(168,85,247,.07));border:1px solid rgba(79,124,255,.2)}
+.ai-priority{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;margin-bottom:6px}
+
+/* ── OCR ── */
+.ocr-field{background:var(--c-card2);border:1px solid var(--c-border2);border-radius:7px;padding:9px 11px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ocr-conf{font-size:10px;padding:2px 7px;border-radius:5px;font-weight:700;flex-shrink:0}
+.ocr-hi{background:rgba(34,197,94,.18);color:var(--c-green)}
+.ocr-med{background:rgba(245,158,11,.18);color:var(--c-amber)}
+.ocr-lo{background:rgba(239,68,68,.18);color:var(--c-red)}
+
+/* ── AGENT CARD ── */
+.agent-card{background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius);padding:11px;text-align:center}
+
+/* ── MILESTONE ── */
+.ms-item{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--c-border)}
+.ms-item:last-child{border-bottom:none}
+.ms-icon{width:33px;height:33px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+
+/* ── MOBILE FRAME ── */
+.mobile-frame{width:262px;background:#0d0d0d;border-radius:30px;border:3px solid var(--c-border2);padding:8px;margin:0 auto;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.mobile-screen{background:var(--c-card);border-radius:24px;overflow:hidden;min-height:490px}
+.mobile-bar{background:var(--c-accent);padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:2px;background:var(--c-card);border-radius:8px;padding:3px;margin-bottom:16px;border:1px solid var(--c-border);flex-wrap:wrap}
+.tab{padding:6px 15px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;color:var(--c-muted);border:none;background:none;transition:all .15s}
+.tab.active{background:var(--c-accent);color:#fff}
+
+/* ── PILLS ── */
+.pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px}
+.pill{padding:5px 13px;border-radius:99px;font-size:11px;cursor:pointer;border:1px solid var(--c-border);background:transparent;color:var(--c-muted);font-weight:600;transition:all .15s}
+.pill.active{background:var(--c-accent);border-color:var(--c-accent);color:#fff}
+
+/* ── ROUTING ── */
+.rule-row{background:var(--c-surface);border:1px solid var(--c-border);border-radius:7px;padding:10px 12px;margin-bottom:8px;display:flex;gap:10px;align-items:center}
+.rule-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── CP CARD ── */
+.cp-card{background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius);padding:12px;margin-bottom:8px;display:flex;gap:12px;align-items:center}
+
+/* ── LOADING ── */
+.loading{display:flex;align-items:center;justify-content:center;height:100px;color:var(--c-muted);gap:8px;font-size:12px}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.spin{animation:spin 1s linear infinite}
+
+/* ── LOGIN ── */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--c-bg);padding:20px}
+.login-card{background:var(--c-surface);border:1px solid var(--c-border2);border-radius:16px;padding:34px;width:390px;max-width:100%}
+.login-logo{display:flex;align-items:center;gap:11px;margin-bottom:8px;justify-content:center}
+.role-btn{width:100%;background:var(--c-card);border:1px solid var(--c-border);border-radius:8px;padding:11px 15px;color:var(--c-text);text-align:left;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-family:var(--font);font-weight:500;transition:border-color .15s}
+.role-btn:hover{border-color:var(--c-accent)}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="login-wrap" id="loginRoot"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   MOCK DATA
+═══════════════════════════════════════════ */
+const ROLES=['Super Admin','Director','Sales Manager','Sales Executive','Channel Partner','Finance Executive','Site Visit Coordinator'];
+const ROLE_SHORT={'Super Admin':'SA','Director':'DR','Sales Manager':'SM','Sales Executive':'SE','Channel Partner':'CP','Finance Executive':'FE','Site Visit Coordinator':'SV'};
+const SOURCES=['Facebook','Instagram','Google Ads','MagicBricks','Housing.com','99Acres','Website'];
+const STAGES=['New','Contacted','Site Visit','Negotiation','Booking','Closed','Lost'];
+const AGENTS=['Rohit Sharma','Priya Mehta','Aakash Verma','Sunita Rao','Deepak Joshi','Kavya Nair','Arjun Singh'];
+const PROJECTS=['Emerald Heights','Sapphire Residences','Lotus Grande'];
+const NAMES=['Ramesh Kumar','Sunil Gupta','Anita Sharma','Vijay Patel','Meena Singh','Arjun Malhotra','Pooja Yadav','Kiran Desai','Rajesh Iyer','Sunita Nair','Anil Verma','Priya Chaudhary','Deepak Joshi','Kavita Mishra','Manish Tiwari','Geeta Rajan','Ashok Pandey','Lavanya Menon','Suresh Reddy','Chitra Bhatt','Vikram Shah','Nandini Pillai','Harish Bose','Divya Agarwal','Sanjay Kapoor','Ritu Sharma','Mohan Lal','Seema Jain','Prakash Hegde','Usha Rao','Naresh Gupta','Anita Biswas','Sanjiv Nair','Preeti Malhotra','Nitin Shukla','Rekha Choudhury','Rajiv Bansali','Sneha Kulkarni','Tarun Soni','Varsha Tripathi','Pankaj Mehta','Swati Dubey','Girish Kamath','Nalini Patel','Hemant Singh','Sapna Joshi','Rohit Das','Mamta Thakur','Bharat Bedi','Kamla Tiwari'];
+const CP_FIRMS=['Kalpana Realty','RealEdge Partners','PropNest Brokers','HomeFirst Advisors','City Keys India','GreenLeaf Realty','Urban Square Brokers'];
+
+const r = arr => arr[Math.floor(Math.random()*arr.length)];
+const rn = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+
+const LEADS = Array.from({length:108},(_,i)=>{
+  const score=rn(10,99);
+  return{id:i+1,name:NAMES[i%NAMES.length],phone:`+91 ${rn(7,9)}${String(rn(0,99999999)).padStart(9,'0')}`,
+    source:r(SOURCES),stage:r(STAGES),heat:score>70?'Hot':score>40?'Warm':'Cold',
+    score,agent:r(AGENTS),project:r(PROJECTS),budget:`₹${rn(45,320)}L`,
+    lastActivity:`${rn(1,72)}h ago`,nextFollowup:`${rn(1,5)}d`,sla:rn(2,55),
+    language:r(['Hindi','English','Marathi','Tamil','Telugu']),created:`${rn(1,28)}/0${rn(1,5)}/2025`};
+});
+
+const INVENTORY_STATUS=['Available','Hold','Soft Block','Booked','Sold'];
+const INVENTORY=[];
+['A','B','C'].forEach((tower,ti)=>{
+  for(let fl=1;fl<=12;fl++)
+    for(let ut=1;ut<=8;ut++){
+      const st=r(INVENTORY_STATUS),area=rn(850,2800);
+      INVENTORY.push({tower,floor:fl,unit:ut,id:`T${tower}-F${fl}-U${ut}`,
+        status:st,area,price:Math.round(area*(rn(6800,12500)/10)*10),
+        facing:r(['North','South','East','West','NE','NW','SE','SW']),
+        type:area>2000?'Premium':area>1400?'Standard':'Economy',
+        plc:rn(0,200000),floorRise:fl*25000,project:PROJECTS[ti]});
+    }
+});
+
+const CPs=[
+  {name:'Raj Properties',firm:CP_FIRMS[0],leads:18,comm:'₹4.2L',status:'Active',pending:'₹1.8L',approved:'₹2.4L',lock:42},
+  {name:'Neha Brokers',firm:CP_FIRMS[1],leads:12,comm:'₹3.1L',status:'Active',pending:'₹0.8L',approved:'₹2.3L',lock:28},
+  {name:'Metro Realty',firm:CP_FIRMS[2],leads:24,comm:'₹6.8L',status:'Active',pending:'₹2.1L',approved:'₹4.7L',lock:55},
+  {name:'Prime Keys',firm:CP_FIRMS[3],leads:9,comm:'₹2.2L',status:'On Hold',pending:'₹2.2L',approved:'₹0',lock:12},
+  {name:'City Links',firm:CP_FIRMS[4],leads:31,comm:'₹8.4L',status:'Active',pending:'₹3.1L',approved:'₹5.3L',lock:60},
+];
+
+const NAV=[
+  {id:'dashboard',icon:'ti-layout-dashboard',label:'Dashboard'},
+  {id:'leads',icon:'ti-users',label:'Lead Management',badge:'12',bt:'badge-red'},
+  {id:'routing',icon:'ti-arrows-shuffle',label:'Lead Routing'},
+  {id:'inventory',icon:'ti-building-skyscraper',label:'Inventory'},
+  {id:'pricing',icon:'ti-calculator',label:'Pricing & Quotes'},
+  {id:'whatsapp',icon:'ti-brand-whatsapp',label:'WhatsApp Hub'},
+  {id:'telephony',icon:'ti-phone-call',label:'Call Center'},
+  {id:'field',icon:'ti-map-pin',label:'Field Force'},
+  {id:'cp',icon:'ti-users-group',label:'Channel Partners'},
+  {id:'collections',icon:'ti-receipt',label:'Collections'},
+  {id:'ocr',icon:'ti-scan',label:'Documents & OCR'},
+  {id:'mis',icon:'ti-chart-dots-3',label:'MIS Analytics'},
+  {id:'ai',icon:'ti-brain',label:'AI Insights',badge:'6',bt:'badge-amber'},
+];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let currentRole='';
+let activeModule='dashboard';
+let selTower='A';
+let charts={};
+
+/* ═══════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════ */
+function ava(text,size=32,fs=12){
+  const initials=text.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+  return `<div class="avatar" style="width:${size}px;height:${size}px;font-size:${fs}px">${initials}</div>`;
+}
+
+function statusClass(s){
+  return s==='Available'?'u-avail':s==='Hold'?'u-hold':s==='Soft Block'?'u-soft':s==='Booked'?'u-booked':'u-sold';
+}
+
+function destroyChart(id){
+  if(charts[id]){charts[id].destroy();delete charts[id];}
+}
+
+function mkChart(id,type,labels,datasets,opts={}){
+  const ctx=document.getElementById(id);
+  if(!ctx)return;
+  destroyChart(id);
+  charts[id]=new Chart(ctx,{type,data:{labels,datasets},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},...(opts.plugins||{})},
+      scales:type==='pie'||type==='doughnut'?{}:{
+        x:{ticks:{color:'#8892b0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}},
+        y:{ticks:{color:'#8892b0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}},
+        ...( opts.scales||{})
+      },...opts}});
+}
+
+/* ═══════════════════════════════════════════
+   LOGIN
+═══════════════════════════════════════════ */
+function renderLogin(){
+  document.getElementById('app').innerHTML=`
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-mark" style="width:38px;height:38px;font-size:18px">P</div>
+      <div><div style="font-size:22px;font-weight:800;letter-spacing:-.5px">PropOS</div>
+      <div style="font-size:11px;color:var(--c-muted)">Enterprise Real Estate Operating System</div></div>
+    </div>
+    <div style="text-align:center;margin:18px 0 20px;font-size:13px;color:var(--c-muted)">Select your role to enter the platform demo</div>
+    ${ROLES.map(role=>`
+    <button class="role-btn" onclick="doLogin('${role}')">
+      <span style="display:flex;align-items:center;gap:9px">
+        ${ava(role,26,10)}
+        <span>${role}</span>
+      </span>
+      <i class="ti ti-arrow-right" style="color:var(--c-muted)"></i>
+    </button>`).join('')}
+    <div style="margin-top:20px;text-align:center;font-size:11px;color:var(--c-border2)">
+      POC Demo — All data is simulated &nbsp;•&nbsp; v2.5.1
+    </div>
+  </div>
+</div>`;
+}
+
+function doLogin(role){
+  currentRole=role;
+  document.getElementById('app').innerHTML=`
+<div class="sidebar" id="sidebar"></div>
+<div class="main">
+  <div class="topbar" id="topbar"></div>
+  <div class="content" id="content"></div>
+</div>`;
+  buildSidebar();
+  buildTopbar();
+  goto('dashboard');
+}
+
+/* ═══════════════════════════════════════════
+   LAYOUT SHELL
+═══════════════════════════════════════════ */
+function buildSidebar(){
+  document.getElementById('sidebar').innerHTML=`
+<div class="sidebar-logo">
+  <div class="logo-mark">P</div>
+  <div><div class="logo-name">PropOS</div><div class="logo-ver">v2.5.1</div></div>
+</div>
+<div class="sidebar-section">Core Modules</div>
+${NAV.slice(0,5).map(n=>navItem(n)).join('')}
+<div class="sidebar-section">Operations</div>
+${NAV.slice(5,10).map(n=>navItem(n)).join('')}
+<div class="sidebar-section">Analytics</div>
+${NAV.slice(10).map(n=>navItem(n)).join('')}
+<div class="sidebar-footer">
+  <div class="nav-item" onclick="doLogout()">
+    <i class="ti ti-logout"></i><span>Logout</span>
+  </div>
+</div>`;
+}
+
+function navItem(n){
+  return`<div class="nav-item${activeModule===n.id?' active':''}" onclick="goto('${n.id}')">
+  <i class="ti ${n.icon}"></i>
+  <span>${n.label}</span>
+  ${n.badge?`<span class="nav-badge ${n.bt||'badge-red'}">${n.badge}</span>`:''}
+</div>`;
+}
+
+function buildTopbar(){
+  const label=NAV.find(n=>n.id===activeModule)?.label||'Dashboard';
+  document.getElementById('topbar').innerHTML=`
+<div class="topbar-title">${label}</div>
+<button class="tb-btn"><i class="ti ti-refresh"></i> Refresh</button>
+<button class="tb-btn"><i class="ti ti-bell"></i> Alerts <span style="background:var(--c-red);color:#fff;font-size:10px;padding:1px 6px;border-radius:99px;margin-left:2px">4</span></button>
+<span class="role-pill">${currentRole}</span>
+${ava(currentRole,30,11)}`;
+}
+
+function goto(id){
+  activeModule=id;
+  Object.keys(charts).forEach(destroyChart);
+  buildSidebar();
+  buildTopbar();
+  const c=document.getElementById('content');
+  c.innerHTML=`<div class="loading"><i class="ti ti-loader spin"></i> Loading ${id}...</div>`;
+  setTimeout(()=>{
+    ({dashboard:pgDashboard,leads:pgLeads,routing:pgRouting,inventory:pgInventory,
+      pricing:pgPricing,whatsapp:pgWhatsapp,telephony:pgTelephony,field:pgField,
+      cp:pgCP,collections:pgCollections,ocr:pgOCR,mis:pgMIS,ai:pgAI})[id]?.();
+  },90);
+}
+
+function doLogout(){
+  currentRole='';activeModule='dashboard';
+  renderLogin();
+}
+
+/* ═══════════════════════════════════════════
+   PAGE: DASHBOARD
+═══════════════════════════════════════════ */
+function pgDashboard(){
+  const hotCount=LEADS.filter(l=>l.heat==='Hot').length;
+  const avail=INVENTORY.filter(u=>u.status==='Available').length;
+  document.getElementById('content').innerHTML=`
+<div class="kpi-grid">
+  ${[
+    ['Total Leads',LEADS.length,'var(--c-text)','ti-users','+18% this week','trend-up'],
+    ['Hot Leads',hotCount,'var(--c-red)','ti-flame','Needs attention','trend-down'],
+    ['Site Visits Today',rn(8,22),'var(--c-teal)','ti-map-pin','+3 vs yesterday','trend-up'],
+    ['Bookings MTD',rn(12,28),'var(--c-green)','ti-file-invoice','+12% vs last month','trend-up'],
+    ['Revenue MTD',`₹${rn(18,42)}.${rn(1,9)}Cr`,'var(--c-amber)','ti-currency-rupee','78% of target','trend-up'],
+    ['Available Units',avail,'var(--c-accent)','ti-building-skyscraper','-6% inventory','trend-down'],
+  ].map(([l,v,c,ic,sub,tc])=>`
+  <div class="kpi-card">
+    <div class="kpi-label"><i class="ti ${ic}"></i>${l}</div>
+    <div class="kpi-value" style="color:${c}">${v}</div>
+    <div class="kpi-trend ${tc}"><i class="ti ${tc==='trend-up'?'ti-trending-up':'ti-trending-down'}"></i>${sub}</div>
+  </div>`).join('')}
+</div>
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-filter"></i>Lead Funnel</span>
+    <button class="panel-action" onclick="goto('leads')">View all →</button></div>
+    ${[['New',108],['Contacted',82],['Site Visit',54],['Negotiation',31],['Booked',18],['Closed-Won',12]].map(([s,n],i)=>`
+    <div class="funnel-bar">
+      <div class="funnel-label">${s}</div>
+      <div class="funnel-fill" style="width:${Math.round(n/1.08)}%;background:linear-gradient(90deg,${['#4f7cff','#5c7afc','#6978f8','#7774f3','#8470ee','#916ae8'][i]},${['#a855f7','#a357ee','#9e5be5','#995fdc','#9463d3','#8f67ca'][i]})">${n}</div>
+    </div>`).join('')}
+  </div>
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-chart-bar"></i>Source Attribution</span></div>
+    <div style="position:relative;height:185px"><canvas id="srcChart" role="img" aria-label="Leads by source chart">Facebook 28, Google 22, MagicBricks 18, Instagram 15, Housing.com 14, 99Acres 11, Website 9</canvas></div>
+  </div>
+</div>
+<div class="grid-3">
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-activity"></i>Recent Activity</span></div>
+    ${[
+      ['New lead — Ramesh Kumar (Facebook)','2m ago','ti-plus','ti-bell','badge-info'],
+      ['Site visit scheduled — Priya Sharma','8m ago','ti-check','ti-map-pin','badge-ok'],
+      ['Lead reassigned — SLA breach (15m)','15m ago','ti-alert-triangle','ti-refresh','badge-warn'],
+      ['Booking initiated — Unit TB-8-02','32m ago','ti-file-invoice','ti-file','badge-info'],
+      ['Payment received — ₹12L (Sunil G.)','1h ago','ti-currency-rupee','ti-check','badge-ok'],
+    ].map(([t,ti,_,ic,bc])=>`
+    <div class="notif-item" style="padding:7px 10px;margin-bottom:5px">
+      <div class="notif-icon" style="width:24px;height:24px;font-size:11px;background:var(--c-card)"><i class="ti ${ic}"></i></div>
+      <div><div style="font-size:11px">${t}</div><div style="font-size:10px;color:var(--c-muted)">${ti}</div></div>
+    </div>`).join('')}
+  </div>
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-trophy"></i>Agent Leaderboard</span></div>
+    ${AGENTS.slice(0,5).map((a,i)=>{
+      const v=rn(12,34);
+      return`<div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
+        <div style="font-size:11px;font-weight:700;color:var(--c-muted);width:16px">${i+1}</div>
+        ${ava(a,24,9)}
+        <div style="flex:1">
+          <div style="font-size:12px">${a}</div>
+          <div class="prog-wrap"><div class="prog-fill" style="width:${v}%;background:${i<2?'var(--c-green)':i<4?'var(--c-accent)':'var(--c-amber)'}"></div></div>
+        </div>
+        <div style="font-size:12px;font-weight:700">${v}</div>
+      </div>`;
+    }).join('')}
+  </div>
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-building"></i>Inventory Status</span></div>
+    ${[['Available',INVENTORY.filter(u=>u.status==='Available').length,'var(--c-green)'],
+       ['Hold',INVENTORY.filter(u=>u.status==='Hold').length,'var(--c-amber)'],
+       ['Soft Block',INVENTORY.filter(u=>u.status==='Soft Block').length,'var(--c-purple)'],
+       ['Booked',INVENTORY.filter(u=>u.status==='Booked').length,'var(--c-accent)'],
+       ['Sold',INVENTORY.filter(u=>u.status==='Sold').length,'var(--c-red)'],
+    ].map(([s,n,c])=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+      <div style="font-size:12px;color:var(--c-muted)">${s}</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:90px;height:4px;background:var(--c-border);border-radius:2px;overflow:hidden">
+          <div style="height:100%;background:${c};width:${Math.round(n/INVENTORY.length*100)}%"></div>
+        </div>
+        <div style="font-size:12px;font-weight:700;width:28px;text-align:right">${n}</div>
+      </div>
+    </div>`).join('')}
+  </div>
+</div>`;
+  setTimeout(()=>{
+    mkChart('srcChart','bar',SOURCES,[{label:'Leads',data:[28,22,18,15,14,11,9],
+      backgroundColor:['#4f7cff99','#a855f799','#14b8a699','#f59e0b99','#ef444499','#ec489999','#22c55e99'],
+      borderRadius:4}]);
+  },120);
+}
+
+/* ═══════════════════════════════════════════
+   PAGE: LEADS
+═══════════════════════════════════════════ */
+function pgLeads(){
+  document.getElementById('content').innerHTML=`
+<div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+  <input class="form-input" style="width:210px" placeholder="🔍  Search leads..." id="leadSearch">
+  <div class="pill-row" style="margin:0">
+    <button class="pill active" onclick="filterLeads(this,'All')">All (${LEADS.length})</button>
+    <button class="pill" onclick="filterLeads(this,'Hot')">🔴 Hot (${LEADS.filter(l=>l.heat==='Hot').length})</button>
+    <button class="pill" onclick="filterLeads(this,'Warm')">🟡 Warm (${LEADS.filter(l=>l.heat==='Warm').length})</button>
+    <button class="pill" onclick="filterLeads(this,'Cold')">🔵 Cold (${LEADS.filter(l=>l.heat==='Cold').length})</button>
+  </div>
+  <button class="btn btn-primary" style="margin-left:auto" onclick="showNewLead()"><i class="ti ti-plus"></i>New Lead</button>
+</div>
+<div class="alert alert-warn" style="margin-bottom:12px">
+  <i class="ti ti-alarm"></i>
+  <strong>3 leads approaching SLA breach</strong> — Response required within 15 minutes to avoid auto-reassignment.
+</div>
+<div id="leadList">
+${LEADS.slice(0,32).map(l=>leadCard(l)).join('')}
+</div>
+<div style="text-align:center;margin-top:12px;font-size:12px;color:var(--c-muted)">Showing 32 of ${LEADS.length} leads</div>`;
+}
+
+function leadCard(l){
+  const slaColor=l.sla<10?'var(--c-red)':l.sla<20?'var(--c-amber)':'var(--c-muted)';
+  return`<div class="lead-card" onclick="showLead(${l.id})">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap">
+    ${ava(l.name,28,10)}
+    <div class="lead-name">${l.name}</div>
+    <span class="badge badge-${l.heat.toLowerCase()}">${l.heat}</span>
+    <span class="badge badge-source">${l.source}</span>
+    <span class="badge badge-stage">${l.stage}</span>
+    <div style="margin-left:auto;font-size:11px;color:var(--c-muted)">${l.phone}</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:9px;margin-bottom:6px;flex-wrap:wrap">
+    <div style="font-size:11px;color:var(--c-muted)">Score</div>
+    <div class="score-bar-wrap"><div class="score-bar" style="width:${l.score}%"></div></div>
+    <div style="font-size:11px;font-weight:700">${l.score}</div>
+    <div style="font-size:11px;color:var(--c-muted);margin-left:6px">Agent: <span style="color:var(--c-text)">${l.agent}</span></div>
+    <div style="font-size:11px;color:var(--c-muted)">Budget: <span style="color:var(--c-text)">${l.budget}</span></div>
+    <div style="font-size:11px;color:var(--c-muted)">Project: <span style="color:var(--c-text)">${l.project}</span></div>
+  </div>
+  <div class="lead-meta">
+    <span><i class="ti ti-clock"></i> Last: ${l.lastActivity}</span>
+    <span><i class="ti ti-calendar"></i> Follow-up: ${l.nextFollowup}</span>
+    <span style="color:${slaColor};font-weight:700"><i class="ti ti-alarm"></i> SLA: ${l.sla}m</span>
+    <span><i class="ti ti-language"></i> ${l.language}</span>
+  </div>
+</div>`;
+}
+
+function filterLeads(btn,filter){
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  const list=document.getElementById('leadList');
+  if(!list)return;
+  const filtered=filter==='All'?LEADS:LEADS.filter(l=>l.heat===filter);
+  list.innerHTML=filtered.slice(0,32).map(l=>leadCard(l)).join('');
+}
+
+function showLead(id){
+  const l=LEADS.find(x=>x.id===id);if(!l)return;
+  modal(`Lead — ${l.name}`,`
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px">
+    ${[['Phone',l.phone],['Source',l.source],['Stage',l.stage],['Agent',l.agent],['Budget',l.budget],['Project',l.project],['Language',l.language],['Lead Score',l.score+'/100'],['Created',l.created],['Heat',l.heat]].map(([k,v])=>`
+    <div style="background:var(--c-card);border-radius:7px;padding:8px 10px">
+      <div style="font-size:10px;color:var(--c-muted)">${k}</div>
+      <div style="font-size:13px;font-weight:700">${v}</div>
+    </div>`).join('')}
+  </div>
+  <div style="font-weight:700;font-size:13px;margin-bottom:11px">Activity Timeline</div>
+  ${[['Called — no answer','2h ago','ti-phone'],['WhatsApp brochure sent','5h ago','ti-brand-whatsapp'],['Site visit requested','1d ago','ti-map-pin'],['Lead created from ${l.source}','2d ago','ti-plus']].map(([a,t,ic])=>`
+  <div class="tl-item">
+    <div class="tl-dot"><i class="ti ${ic}" style="font-size:10px"></i></div>
+    <div class="tl-body"><div style="font-size:12px">${a}</div><div style="font-size:10px;color:var(--c-muted)">${t}</div></div>
+  </div>`).join('')}
+  <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+    <button class="btn btn-primary"><i class="ti ti-phone"></i>Call</button>
+    <button class="btn btn-success"><i class="ti ti-brand-whatsapp"></i>WhatsApp</button>
+    <button class="btn btn-ghost"><i class="ti ti-calendar"></i>Schedule Visit</button>
+    <button class="btn btn-ghost"><i class="ti ti-file-invoice"></i>Generate Quote</button>
+  </div>`);
+}
+
+function showNewLead(){
+  modal('New Lead',`
+  <div class="form-grid">
+    ${[['Full Name','text','e.g. Ramesh Kumar'],['Phone','text','+91 XXXXX XXXXX']].map(([l,t,p])=>`
+    <div class="form-group"><label class="form-label">${l}</label><input class="form-input" type="${t}" placeholder="${p}"></div>`).join('')}
+    <div class="form-group"><label class="form-label">Lead Source</label><select class="form-input">${SOURCES.map(s=>`<option>${s}</option>`).join('')}</select></div>
+    <div class="form-group"><label class="form-label">Assign Agent</label><select class="form-input">${AGENTS.map(a=>`<option>${a}</option>`).join('')}</select></div>
+    <div class="form-group"><label class="form-label">Budget (₹L)</label><input class="form-input" placeholder="e.g. 150"></div>
+    <div class="form-group"><label class="form-label">Interested Project</label><select class="form-input">${PROJECTS.map(p=>`<option>${p}</option>`).join('')}</select></div>
+  </div>
+  <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:10px" onclick="closeModal()"><i class="ti ti-check"></i>Create Lead</button>`);
+}
+
+/* ═══════════════════════════════════════════
+   PAGE: ROUTING
+═══════════════════════════════════════════ */
+function pgRouting(){
+  document.getElementById('content').innerHTML=`
+<div class="alert alert-warn">
+  <i class="ti ti-shield-check"></i>
+  <strong>Ghost Call Prevention Active</strong> — No action in 15 mins triggers automatic reassignment to next available agent.
+</div>
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-settings-automation"></i>Routing Rules Engine</span>
+    <button class="btn btn-primary btn-sm"><i class="ti ti-plus"></i>Add Rule</button></div>
+    ${[
+      ['Budget ≥ ₹2Cr','Assign to Senior Closer','Arjun Singh','green'],
+      ['Language: Hindi','Hindi-speaking agent','Rohit Sharma','green'],
+      ['Source: Facebook','Social media specialist','Kavya Nair','green'],
+      ['Lead Score > 80','Priority hot queue','Top 2 closers','amber'],
+      ['No contact in 15m','Auto-reassign','Next available','red'],
+      ['Duplicate detected','Merge & assign single','Deepak Joshi','green'],
+    ].map(([rule,action,agent,c])=>`
+    <div class="rule-row">
+      <div class="rule-dot" style="background:var(--c-${c})"></div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700">${rule}</div>
+        <div style="font-size:11px;color:var(--c-muted)">${action} → <span style="color:var(--c-accent)">${agent}</span></div>
+      </div>
+      <span class="badge badge-ok" style="font-size:9px">ACTIVE</span>
+    </div>`).join('')}
+  </div>
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-activity"></i>Live Routing Events</span></div>
+    ${[
+      ['Sunita Gupta (₹2.8Cr)','→ Arjun Singh (Senior Closer)','30s ago','ok'],
+      ['Manoj Tiwari (Hindi)','→ Rohit Sharma (Hindi Agent)','2m ago','ok'],
+      ['Kavita Reddy','SLA BREACH — reassigned to Kavya Nair','4m ago','err'],
+      ['Vikram Shah','Duplicate merged with lead #48','6m ago','warn'],
+      ['Neha Joshi (FB)','→ Social Media Queue → Kavya Nair','9m ago','ok'],
+      ['Ramesh Kumar (₹3.1Cr)','→ Senior Closer priority queue','12m ago','info'],
+    ].map(([lead,msg,time,type])=>`
+    <div class="notif-item" style="margin-bottom:6px">
+      <div class="notif-icon" style="background:rgba(${type==='ok'?'34,197,94':type==='err'?'239,68,68':type==='warn'?'245,158,11':'79,124,255'},.15)">
+        <i class="ti ti-${type==='ok'?'check':type==='err'?'alert-triangle':type==='warn'?'refresh':'arrow-right'}" style="color:var(--c-${type==='ok'?'green':type==='err'?'red':type==='warn'?'amber':'accent'})"></i>
+      </div>
+      <div><div style="font-size:12px"><strong>${lead}</strong> ${msg}</div><div style="font-size:10px;color:var(--c-muted)">${time}</div></div>
+    </div>`).join('')}
+  </div>
+</div>
+<div class="panel">
+  <div class="panel-hdr"><span class="panel-title"><i class="ti ti-users"></i>Agent Availability Matrix</span></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Agent</th><th>Status</th><th>Load</th><th>Languages</th><th>Speciality</th><th>Response Rate</th><th>Action</th></tr></thead>
+    <tbody>
+    ${AGENTS.map((a,i)=>{
+      const st=[['Available','green'],['On Call','amber'],['Available','green'],['Break','red'],['Available','green'],['Available','green'],['On Call','amber']][i];
+      const load=rn(2,9);
+      const langs=['Hindi,English','English','Hindi,Marathi','Tamil,English','Telugu,English','Gujarati,English','Hindi,English'][i];
+      const specs=['Luxury','General','Mid-Segment','South Projects','Luxury','General','Mid-Segment'][i];
+      const rate=rn(72,96);
+      return`<tr>
+        <td><div style="display:flex;align-items:center;gap:7px">${ava(a,22,9)}${a}</div></td>
+        <td><span style="width:8px;height:8px;border-radius:50%;background:var(--c-${st[1]});display:inline-block;margin-right:5px"></span>${st[0]}</td>
+        <td>${load}/10</td>
+        <td style="color:var(--c-muted)">${langs}</td>
+        <td><span class="badge badge-info" style="font-size:9px">${specs}</span></td>
+        <td>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px">
+            <div style="width:55px;height:4px;background:var(--c-border);border-radius:2px;overflow:hidden">
+              <div style="height:100%;background:${rate>85?'var(--c-green)':'var(--c-amber)'};width:${rate}%"></div>
+            </div>${rate}%
+          </div>
+        </td>
+        <td><button class="btn btn-ghost btn-sm">Assign Lead</button></td>
+      </tr>`;
+    }).join('')}
+    </tbody>
+  </table></div>
+</div>`;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE: INVENTORY
+═══════════════════════════════════════════ */
+function pgInventory(){
+  const towers=['A','B','C'];
+  document.getElementById('content').innerHTML=`
+<div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+  <div class="tabs" style="margin-bottom:0">
+    ${towers.map(t=>`<button class="tab${selTower===t?' active':''}" onclick="selTower='${t}';pgInventory()">
+      ${PROJECTS[towers.indexOf(t)].split(' ')[0]} Tower ${t}
+    </button>`).join('')}
+  </div>
+  <div style="display:flex;gap:10px;margin-left:auto;flex-wrap:wrap;align-items:center">
+    ${[['u-avail','Available'],['u-hold','Hold'],['u-soft','Soft Block'],['u-booked','Booked'],['u-sold','Sold']].map(([cls,lbl])=>`
+    <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--c-muted)">
+      <span class="inv-unit ${cls}" style="width:14px;height:14px;padding:0;display:inline-block;border-radius:3px"></span>${lbl}
+    </span>`).join('')}
+  </div>
+</div>
+<div class="panel mb-16">
+  <div class="panel-hdr">
+    <span class="panel-title"><i class="ti ti-building-skyscraper"></i>Tower ${selTower} — Interactive Stacking Plan</span>
+    <span style="font-size:11px;color:var(--c-muted)">Click any unit for details & pricing</span>
+  </div>
+  <div class="tbl-wrap">
+  <table style="min-width:600px">
+    <thead><tr><th style="width:50px">Floor</th>${Array.from({length:8},(_,u)=>`<th style="text-align:center">Unit ${u+1}</th>`).join('')}</tr></thead>
+    <tbody>
+    ${Array.from({length:12},(_,fi)=>{
+      const floor=12-fi;
+      const units=INVENTORY.filter(u=>u.tower===selTower&&u.floor===floor);
+      return`<tr>
+        <td style="font-weight:700;color:var(--c-muted)">F${floor}</td>
+        ${units.map(u=>`<td style="text-align:center;padding:3px">
+          <div class="inv-unit ${statusClass(u.status)}" onclick='showUnit(${JSON.stringify(u)})' title="${u.id}">${u.unit}</div>
+        </td>`).join('')}
+      </tr>`;
+    }).join('')}
+    </tbody>
+  </table>
+  </div>
+</div>
+<div class="kpi-grid">
+  ${[['Available',INVENTORY.filter(u=>u.tower===selTower&&u.status==='Available').length,'var(--c-green)'],
+     ['Booked',INVENTORY.filter(u=>u.tower===selTower&&u.status==='Booked').length,'var(--c-accent)'],
+     ['Sold',INVENTORY.filter(u=>u.tower===selTower&&u.status==='Sold').length,'var(--c-red)'],
+     ['Hold/SB',(INVENTORY.filter(u=>u.tower===selTower&&(u.status==='Hold'||u.status==='Soft Block')).length),'var(--c-amber)'],
+  ].map(([s,n,c])=>`<div class="kpi-card"><div class="kpi-label">${s}</div><div class="kpi-value" style="color:${c}">${n}</div></div>`).join('')}
+</div>`;
+}
+
+function showUnit(u){
+  if(typeof u==='string')u=JSON.parse(u);
+  const total=u.price+u.plc+u.floorRise+250000+Math.round(u.price*0.05)+75000;
+  modal(`Unit ${u.id}`,`
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px">
+    ${[['Project',u.project],['Tower',u.tower],['Floor',u.floor],['Unit',u.unit],['Type',u.type],['Area',u.area+' sqft'],['Facing',u.facing],['Status',u.status]].map(([k,v])=>`
+    <div style="background:var(--c-card);border-radius:7px;padding:8px 10px">
+      <div style="font-size:10px;color:var(--c-muted)">${k}</div>
+      <div style="font-size:13px;font-weight:700">${v}</div>
+    </div>`).join('')}
+  </div>
+  <div style="font-weight:700;font-size:13px;margin-bottom:10px">Price Breakdown</div>
+  ${[['Base Price',u.price],['PLC',u.plc],['Floor Rise',u.floorRise],['Club Membership',250000],['GST (5%)',Math.round(u.price*0.05)],['Legal & Registry',75000]].map(([k,v])=>`
+  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--c-border);font-size:12px">
+    <span style="color:var(--c-muted)">${k}</span><span style="font-weight:600">₹${(v/100000).toFixed(2)}L</span>
+  </div>`).join('')}
+  <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:15px;font-weight:800;color:var(--c-green)">
+    <span>Grand Total</span><span>₹${(total/100000).toFixed(2)}L</span>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:6px">
+    <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="closeModal()"><i class="ti ti-lock"></i>Soft Block</button>
+    <button class="btn btn-success" style="flex:1;justify-content:center" onclick="closeModal()"><i class="ti ti-file-invoice"></i>Generate Quote</button>
+  </div>`);
+}
+
+/* ═══════════════════════════════════════════
+   PAGE: PRICING
+═══════════════════════════════════════════ */
+function pgPricing(){
+  document.getElementById('content').innerHTML=`
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-calculator"></i>Quote Generator</span></div>
+    <div class="form-group" style="margin-bottom:11px">
+      <label class="form-label">Select Lead</label>
+      <select class="form-input">
+        <option>Ramesh Kumar (+91 98765 43210)</option>
+        <option>Sunita Gupta (+91 98451 23456)</option>
+        <option>Vikram Shah (+91 97543 21098)</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin-bottom:11px">
+      <label class="form-label">Select Unit</label>
+      <select class="form-input" id="qUnit" onchange="calcQuote()">
+        <option value="1450,9200">TA-F8-U4 | 1450 sqft | ₹9,200/sqft | 3BHK</option>
+        <option value="2100,11500">TB-F10-U2 | 2100 sqft | ₹11,500/sqft | 4BHK</option>
+        <option value="850,7800">TC-F3-U6 | 850 sqft | ₹7,800/sqft | 2BHK</option>
+        <option value="2800,14500">TA-F11-U1 | 2800 sqft | ₹14,500/sqft | Penthouse</option>
+      </select>
+    </div>
+    <div class="form-grid" style="margin-bottom:11px">
+      <div class="form-group">
+        <label class="form-label">Parking Slots</label>
+        <select class="form-input" id="qPark" onchange="calcQuote()">
+          <option value="0">None</option>
+          <option value="1" selected>1 Covered — ₹3.5L</option>
+          <option value="2">2 Covered — ₹7L</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Club Membership</label>
+        <select class="form-input" id="qClub" onchange="calcQuote()">
+          <option value="1" selected>Yes — ₹2.5L</option>
+          <option value="0">No</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Discount (%)</label>
+        <input class="form-input" id="qDisc" type="number" value="1.5" min="0" max="10" step="0.5" onchange="calcQuote()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Payment Plan</label>
+        <select class="form-input">
+          <option>Construction Linked</option>
+          <option>Down Payment (10%)</option>
+          <option>Flexi 30:70 Plan</option>
+          <option>Custom Milestone</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="calcQuote()">
+      <i class="ti ti-calculator"></i>Recalculate Cost Sheet
+    </button>
+  </div>
+  <div class="panel">
+    <div class="panel-hdr">
+      <span class="panel-title"><i class="ti ti-file-invoice"></i>Cost Sheet Preview</span>
+      <button class="btn btn-ghost btn-sm"><i class="ti ti-download"></i>PDF</button>
+    </div>
+    <div id="quoteCost">
+      <div class="loading"><i class="ti ti-loader spin"></i>Calculating...</div>
+    </div>
+  </div>
+</div>
+<div class="panel mt-0">
+  <div class="panel-hdr"><span class="panel-title"><i class="ti ti-git-branch"></i>Approval Workflow</span></div>
+  <div style="display:flex;gap:8px;align-items:center;overflow-x:auto;padding-bottom:4px">
+    ${[['Sales Exec','Quote Created','green'],['Sales Mgr','Reviewed','green'],['Director','Discount Approval','amber'],['Finance','Final Verify','gray'],['Customer','Quote Sent','gray']].map(([role,step,c],i,arr)=>`
+    <div style="text-align:center;min-width:96px">
+      <div style="width:38px;height:38px;border-radius:50%;background:rgba(${c==='green'?'34,197,94':c==='amber'?'245,158,11':'96,165,250'},.15);border:2px solid var(--c-${c==='green'?'green':c==='amber'?'amber':'muted'});display:flex;align-items:center;justify-content:center;margin:0 auto 5px;font-size:11px;font-weight:800;color:var(--c-${c==='green'?'green':c==='amber'?'amber':'muted'})">${i+1}</div>
+      <div style="font-size:11px;font-weight:700">${role}</div>
+      <div style="font-size:10px;color:var(--c-${c==='green'?'green':c==='amber'?'amber':'muted'})">${step}</div>
+    </div>
+    ${i<arr.length-1?'<div style="flex:1;height:2px;background:var(--c-border);min-width:18px;margin-bottom:18px"></div>':''}`).join('')}
+  </div>
+</div>`;
+  setTimeout(calcQuote,100);
+}
+
+function calcQuote(){
+  const [area,rate]=(document.getElementById('qUnit')?.value||'1450,9200').split(',').map(Number);
+  const park=parseInt(document.getElementById('qPark')?.value||'1');
+  const club=parseInt(document.getElementById('qClub')?.value||'1');
+  const disc=parseFloat(document.getElementById('qDisc')?.value||'1.5');
+  const base=area*rate,parkC=park*350000,clubC=club*250000,plc=150000,fr=200000;
+  const sub=base+parkC+clubC+plc+fr,discAmt=sub*(disc/100),after=sub-discAmt;
+  const gst=after*0.05,legal=75000,total=after+gst+legal;
+  const el=document.getElementById('quoteCost');if(!el)return;
+  el.innerHTML=`
+  ${[['Base Price',`${area} sqft × ₹${rate.toLocaleString()}/sqft`,base,false],
+     ['Parking',`${park} covered slot(s)`,parkC,false],
+     ['Club Membership','Premium access',clubC,false],
+     ['PLC','Preferred location charge',plc,false],
+     ['Floor Rise','Floor premium charge',fr,false],
+     ['Discount',`${disc}% negotiated`,discAmt,true],
+     ['GST','5% on unit value',gst,false],
+     ['Legal & Registry','Stamp duty (approx)',legal,false]
+  ].map(([n,d,v,neg])=>`
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--c-border);font-size:12px">
+    <div><div style="font-weight:600">${n}</div><div style="font-size:10px;color:var(--c-muted)">${d}</div></div>
+    <div style="font-weight:700;color:${neg?'var(--c-green)':'var(--c-text)'}">${neg?'−':''}₹${(v/100000).toFixed(2)}L</div>
+  </div>`).join('')}
+  <div style="display:flex;justify-content:space-between;padding:11px 0;font-size:16px;font-weight:800;color:var(--c-accent)">
+    <span>Grand Total</span><span>₹${(total/100000).toFixed(2)}L</span>
+  </div>
+  ${disc>2?`<div class="alert alert-warn"><i class="ti ti-alert-triangle"></i><strong>Director approval required</strong> — Discount exceeds 2% threshold. Notification sent.</div>`:''}
+  <button class="btn btn-primary" style="width:100%;justify-content:center"><i class="ti ti-send"></i>Send to Client</button>`;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE: WHATSAPP
+═══════════════════════════════════════════ */
+function pgWhatsapp(){
+  document.getElementById('content').innerHTML=`
+<div class="kpi-grid" style="margin-bottom:16px">
+  ${[['Messages Sent','12,480','var(--c-text)'],['Delivered','11,842 (94.9%)','var(--c-green)'],['Read','9,210 (73.8%)','var(--c-accent)'],['Replied','3,845 (30.8%)','var(--c-amber)'],['Converted','342 (2.7%)','var(--c-teal)']].map(([l,v,c])=>`
+  <div class="kpi-card"><div class="kpi-label">${l}</div><div class="kpi-value" style="font-size:17px;color:${c}">${v}</div></div>`).join('')}
+</div>
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-brand-whatsapp"></i>Campaign Automation</span>
+    <button class="btn btn-primary btn-sm"><i class="ti ti-plus"></i>New Campaign</button></div>
+    ${[
+      {n:'New Lead Welcome',tr:'On lead creation',st:'Active',sent:1204,rate:'94%',c:'green'},
+      {n:'Site Visit Reminder',tr:'24h before visit',st:'Active',sent:342,rate:'88%',c:'green'},
+      {n:'Post-Visit Feedback',tr:'2h after visit',st:'Active',sent:218,rate:'76%',c:'amber'},
+      {n:'Payment Reminder',tr:'3 days before due',st:'Active',sent:89,rate:'82%',c:'green'},
+      {n:'Re-engagement',tr:'Inactive 7 days',st:'Paused',sent:456,rate:'61%',c:'red'},
+    ].map(c=>`
+    <div style="background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius);padding:11px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+        <div style="font-weight:700;font-size:13px">${c.n}</div>
+        <span class="badge badge-${c.st==='Active'?'ok':'err'}">${c.st}</span>
+      </div>
+      <div style="font-size:11px;color:var(--c-muted);margin-bottom:6px">Trigger: ${c.tr}</div>
+      <div style="display:flex;gap:14px;font-size:11px">
+        <span>Sent: <strong>${c.sent}</strong></span>
+        <span>Open Rate: <strong style="color:var(--c-${c.c})">${c.rate}</strong></span>
+      </div>
+    </div>`).join('')}
+  </div>
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-message-circle"></i>Live Chat — Ramesh Kumar</span>
+    <span class="badge badge-ok">Active</span></div>
+    <div class="chat-wrap">
+      <div class="chat-bubble chat-in">Hi, I am interested in a 3BHK in Emerald Heights. Can you share details?<div class="chat-time">10:22 AM</div></div>
+      <div class="chat-bubble chat-out">Namaste! 🙏 Thank you for your interest in Emerald Heights. We have beautiful 3BHK units starting from ₹1.2Cr. Let me share the project brochure!<div class="chat-time">10:22 AM</div></div>
+      <div class="chat-bubble chat-sys">📎 Brochure_EmeraldHeights.pdf — sent automatically<div class="chat-time">10:22 AM • Automated</div></div>
+      <div class="chat-bubble chat-in">What floors are available?<div class="chat-time">10:35 AM</div></div>
+      <div class="chat-bubble chat-out">Currently Floors 4–12 are open in Tower A. Floors 8 and above offer excellent city views! Shall I schedule a site visit?<div class="chat-time">10:36 AM</div></div>
+      <div class="chat-bubble chat-in">Yes, this Saturday afternoon works for me.<div class="chat-time">10:38 AM</div></div>
+      <div class="chat-bubble chat-out">Confirmed! Site visit booked for Saturday, 14 June at 3:00 PM. Our representative will meet you at the main gate. You will receive a reminder on Friday evening. 🏡<div class="chat-time">10:39 AM • Automated</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <select class="form-input" style="flex:1;font-size:11px">
+        <option>Select template or type message…</option>
+        <option>Payment reminder</option>
+        <option>Visit confirmation</option>
+        <option>Brochure send</option>
+      </select>
+      <button class="btn btn-success"><i class="ti ti-send"></i></button>
+    </div>
+  </div>
+</div>`;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE: TELEPHONY
+═══════════════════════════════════════════ */
+function pgTelephony(){
+  document.getElementById('content').innerHTML=`
+<div class="alert alert-success" style="margin-bottom:14px">
+  <i class="ti ti-phone-incoming"></i>
+  <strong>Incoming Call</strong> — Ramesh Kumar (+91 98765 43210) &nbsp;|&nbsp; Facebook Lead &nbsp;|&nbsp; Score: 87 &nbsp;|&nbsp; Budget: ₹2.1Cr
+  <button class="btn btn-success btn-sm" style="margin-left:auto"><i class="ti ti-phone"></i>Answer</button>
+  <button class="btn btn-danger btn-sm"><i class="ti ti-phone-off"></i>Decline</button>
+</div>
+<div class="kpi-grid">
+  ${[['Calls Today','124','var(--c-accent)'],['Answered','98 (79%)','var(--c-green)'],['Missed','26 (21%)','var(--c-red)'],['Avg Talk Time','4m 32s','var(--c-teal)'],['Active Now','3','var(--c-amber)']].map(([l,v,c])=>`
+  <div class="kpi-card"><div class="kpi-label">${l}</div><div class="kpi-value" style="font-size:18px;color:${c}">${v}</div></div>`).join('')}
+</div>
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-headset"></i>Agent Status Board</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    ${AGENTS.map((a,i)=>{
+      const st=[['Available','green'],['On Call','amber'],['Available','green'],['Break','red'],['Available','green'],['Available','green'],['On Call','amber']][i];
+      const calls=rn(8,22);
+      return`<div class="agent-card">
+        ${ava(a,34,12)}
+        <div style="font-size:11px;font-weight:700;margin:6px 0 3px">${a}</div>
+        <div style="font-size:11px"><span style="width:8px;height:8px;border-radius:50%;background:var(--c-${st[1]});display:inline-block;margin-right:4px"></span>${st[0]}</div>
+        <div style="font-size:10px;color:var(--c-muted);margin-top:3px">${calls} calls</div>
+        ${st[0]==='On Call'?`<div style="font-size:10px;color:var(--c-amber);margin-top:3px">● ${rn(1,8)}:${String(rn(0,59)).padStart(2,'0')}</div>`:''}
+      </div>`;
+    }).join('')}
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-history"></i>Recent Call Log</span></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Lead</th><th>Agent</th><th>Duration</th><th>Outcome</th><th>Rec.</th></tr></thead>
+      <tbody>
+      ${LEADS.slice(0,8).map(l=>{
+        const out=r(['Interested','Callback','Site Visit Set','Not Interested','No Answer']);
+        const dur=`${rn(0,8)}m ${rn(10,59)}s`;
+        const oc={'Interested':'info','Site Visit Set':'ok','No Answer':'err','Not Interested':'err','Callback':'warn'}[out];
+        return`<tr>
+          <td>${l.name}</td>
+          <td style="color:var(--c-muted)">${l.agent.split(' ')[0]}</td>
+          <td>${dur}</td>
+          <td><span class="badge badge-${oc}">${out}</span></td>
+          <td><button class="btn btn-ghost btn-sm"><i class="ti ti-player-play"></i></button></td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table></div>
+    <div class="alert alert-danger" style="margin-top:12px">
+      <i class="ti ti-alert-triangle"></i>
+      5 missed calls auto-escalated to Sales Manager — Kavita, Mohan +3 others
+    </div>
+  </div>
+</div>`;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE: FIELD FORCE
+═══════════════════════════════════════════ */
+function pgField(){
+  document.getElementById('content').innerHTML=`
+<div class="grid-2" style="align-items:start">
+  <div>
+    <div class="panel mb-16">
+      <div class="panel-hdr"><span class="panel-title"><i class="ti ti-map-pin"></i>Field Dashboard</span></div>
+      <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:0">
+        ${[['Visits Today','4','var(--c-green)'],['Pending','2','var(--c-amber)'],['Completed','2','var(--c-teal)']].map(([l,v,c])=>`
+        <div class="kpi-card"><div class="kpi-label">${l}</div><div class="kpi-value" style="font-size:20px;color:${c}">${v}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-hdr"><span class="panel-title"><i class="ti ti-calendar-check"></i>Today's Visit Schedule</span></div>
+      ${[
+        {name:'Ramesh Kumar',time:'10:00 AM',proj:'Emerald Heights',st:'Completed'},
+        {name:'Priya Sharma',time:'12:30 PM',proj:'Sapphire Residences',st:'Completed'},
+        {name:'Sunil Mehta',time:'3:00 PM',proj:'Lotus Grande',st:'In Progress'},
+        {name:'Kavita Reddy',time:'5:30 PM',proj:'Emerald Heights',st:'Scheduled'},
+      ].map(v=>`
+      <div class="ms-item">
+        <div class="ms-icon" style="background:rgba(${v.st==='Completed'?'34,197,94':v.st==='In Progress'?'245,158,11':'79,124,255'},.14);color:var(--c-${v.st==='Completed'?'green':v.st==='In Progress'?'amber':'accent'})">
+          <i class="ti ti-${v.st==='Completed'?'check-circle':v.st==='In Progress'?'loader':'clock'}"></i>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:13px">${v.name}</div>
+          <div style="font-size:11px;color:var(--c-muted)">${v.time} — ${v.proj}</div>
+          <div style="margin-top:4px">
+            <span class="badge badge-${v.st==='Completed'?'ok':v.st==='In Progress'?'warn':'info'}">${v.st}</span>
+            ${v.st!=='Scheduled'?`<span style="font-size:10px;color:var(--c-muted);margin-left:7px"><i class="ti ti-map-pin"></i> GPS Tagged</span>`:''}
+          </div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div>
+    <div style="text-align:center;margin-bottom:10px;font-size:12px;color:var(--c-muted);font-weight:600">MOBILE APP PREVIEW</div>
+    <div class="mobile-frame">
+      <div class="mobile-screen">
+        <div class="mobile-bar">
+          <span style="font-size:12px;font-weight:800;color:#fff">PropOS Field</span>
+          <span style="font-size:10px;color:rgba(255,255,255,.75)">🟢 Online</span>
+        </div>
+        <div style="padding:11px">
+          <div class="alert alert-success" style="margin-bottom:10px;padding:8px 10px;font-size:10px">
+            ✅ GPS Check-In Successful<br>
+            <span style="color:var(--c-muted)">26.8467°N 80.9462°E • 3:04 PM</span>
+          </div>
+          <div style="font-size:11px;font-weight:800;margin-bottom:7px">Active Visit</div>
+          <div style="background:var(--c-card);border-radius:8px;padding:10px;margin-bottom:9px">
+            <div style="font-size:12px;font-weight:700">Sunil Mehta</div>
+            <div style="font-size:10px;color:var(--c-muted)">Lotus Grande · 3:00 PM</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px">
+              <button class="btn btn-primary" style="font-size:10px;padding:5px;justify-content:center"><i class="ti ti-map-pin"></i>Check-In</button>
+              <button class="btn btn-success" style="font-size:10px;padding:5px;justify-content:center"><i class="ti ti-camera"></i>Photo</button>
+            </div>
+          </div>
+          <div class="alert alert-warn" style="padding:7px 10px;font-size:10px;margin-bottom:9px">
+            ⚠️ Offline Mode Detected<br>3 visits queued for sync
+          </div>
+          <div style="font-size:11px;font-weight:800;margin-bottom:6px">Quick Actions</div>
+          ${['Add Lead Note','Upload Site Proof','Request Unit Hold','Mark Visit Done'].map(a=>`
+          <div style="background:var(--c-card);border-radius:6px;padding:7px 9px;margin-bottom:5px;font-size:11px;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            ${a}<i class="ti ti-chevron-right" style="font-size:12px;color:var(--c-muted)"></i>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE: CHANNEL PARTNERS
+═══════════════════════════════════════════ */
+function pgCP(){
+  document.getElementById('content').innerHTML=`
+<div class="kpi-grid">
+  ${[['Active CPs','47','var(--c-green)'],['Leads Registered','284','var(--c-accent)'],['Commission Pipeline','₹38.4L','var(--c-amber)'],['Processed MTD','₹18.2L','var(--c-teal)']].map(([l,v,c])=>`
+  <div class="kpi-card"><div class="kpi-label">${l}</div><div class="kpi-value" style="color:${c}">${v}</div></div>`).join('')}
+</div>
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-users-group"></i>Channel Partner Directory</span>
+    <button class="btn btn-primary btn-sm"><i class="ti ti-plus"></i>Onboard CP</button></div>
+    ${CPs.map(cp=>`
+    <div class="cp-card">
+      ${ava(cp.name,36,12)}
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13px">${cp.name}</div>
+        <div style="font-size:11px;color:var(--c-muted)">${cp.firm}</div>
+        <div style="display:flex;gap:10px;margin-top:4px;font-size:11px;flex-wrap:wrap">
+          <span>Leads: <strong>${cp.leads}</strong></span>
+          <span>Comm: <strong style="color:var(--c-green)">${cp.comm}</strong></span>
+          <span>Lock: <strong style="color:var(--c-amber)">${cp.lock}d</strong></span>
+        </div>
+      </div>
+      <span class="badge badge-${cp.status==='Active'?'ok':'warn'}">${cp.status}</span>
+    </div>`).join('')}
+  </div>
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-receipt-2"></i>Commission Tracker</span></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>CP Firm</th><th>Lead</th><th>Unit</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody>
+      ${[
+        ['Kalpana Realty','Ramesh Kumar','TA-8-4','₹1.8L','Pending'],
+        ['Metro Realty','Priya Sharma','TB-10-2','₹2.4L','Approved'],
+        ['City Links','Sunil Mehta','TC-6-1','₹1.2L','Processed'],
+        ['RealEdge Partners','Kavita Reddy','TA-5-6','₹0.9L','Pending'],
+        ['Prime Keys','Anil Verma','TB-9-3','₹1.5L','On Hold'],
+      ].map(([f,l,u,a,s])=>`<tr>
+        <td style="font-weight:600">${f}</td>
+        <td style="color:var(--c-muted)">${l}</td>
+        <td>${u}</td>
+        <td style="font-weight:700;color:var(--c-green)">${a}</td>
+        <td><span class="badge badge-${s==='Processed'?'ok':s==='Approved'?'info':s==='Pending'?'warn':'err'}">${s}</span></td>
+      </tr>`).join('')}
+      </tbody>
+    </table></div>
+    <div class="alert alert-info" style="margin-top:12px">
+      <i class="ti ti-lock"></i>
+      Lead protection lock active: <strong>60-day exclusive assignment</strong> per CP. Conflict prevention enforced.
+    </div>
+  </div>
+</div>`;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE: COLLECTIONS
+═══════════════════════════════════════════ */
+function pgCollections(){
+  document.getElementById('content').innerHTML=`
+<div class="kpi-grid">
+  ${[['Total Bookings','38','var(--c-accent)'],['Collections MTD','₹4.8Cr','var(--c-green)'],['Overdue','₹0.9Cr','var(--c-red)'],['Next Demand','₹2.1Cr','var(--c-amber)']].map(([l,v,c])=>`
+  <div class="kpi-card"><div class="kpi-label">${l}</div><div class="kpi-value" style="color:${c}">${v}</div></div>`).join('')}
+</div>
+<div class="alert alert-warn">
+  <i class="ti ti-bell"></i>
+  <strong>Milestone Triggered: Foundation Complete</strong> — Bulk payment demand sent to 38 buyers. ₹2.1Cr due by 25 Jun 2025.
+</div>
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-building-factory"></i>Construction Milestones</span></div>
+    ${[
+      {ms:'Foundation Complete',pct:100,date:'Mar 2025',st:'Complete',demand:'₹0.8Cr collected'},
+      {ms:'Slab — Floor 5',pct:100,date:'May 2025',st:'Complete',demand:'₹1.2Cr collected'},
+      {ms:'Slab — Floor 10',pct:65,date:'Aug 2025',st:'In Progress',demand:'₹2.1Cr due'},
+      {ms:'Structure Complete',pct:0,date:'Dec 2025',st:'Upcoming',demand:'₹1.8Cr est.'},
+      {ms:'Finishing Works',pct:0,date:'Apr 2026',st:'Upcoming',demand:'₹1.5Cr est.'},
+      {ms:'Possession',pct:0,date:'Jun 2026',st:'Upcoming',demand:'₹0.9Cr est.'},
+    ].map(m=>`
+    <div class="ms-item">
+      <div class="ms-icon" style="background:rgba(${m.st==='Complete'?'34,197,94':m.st==='In Progress'?'245,158,11':'96,165,250'},.14);color:var(--c-${m.st==='Complete'?'green':m.st==='In Progress'?'amber':'muted'})">
+        <i class="ti ti-${m.st==='Complete'?'check-circle':m.st==='In Progress'?'loader':'clock'}"></i>
+      </div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13px">${m.ms}</div>
+        <div style="font-size:11px;color:var(--c-muted)">${m.date} &mdash; ${m.demand}</div>
+        <div class="prog-wrap"><div class="prog-fill" style="width:${m.pct}%;background:var(--c-${m.st==='Complete'?'green':m.st==='In Progress'?'amber':'muted'})"></div></div>
+      </div>
+    </div>`).join('')}
+  </div>
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-wallet"></i>Buyer Ledger — Ramesh Kumar</span></div>
+    <div style="background:var(--c-surface);border-radius:var(--radius);padding:11px;margin-bottom:13px">
+      ${[['Unit','Emerald Heights — TA-8-4'],['Booking Value','₹1.42Cr'],['Paid','₹0.42Cr (29.6%)'],['Outstanding','₹1.00Cr']].map(([k,v])=>`
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+        <span style="color:var(--c-muted)">${k}</span><strong>${v}</strong>
+      </div>`).join('')}
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Milestone</th><th>Due Date</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody>
+      ${[
+        ['Booking Amount','15 Mar 2025','₹14.2L','Paid'],
+        ['Foundation','30 Apr 2025','₹21.3L','Paid'],
+        ['Slab Floor 5','30 Jun 2025','₹28.4L','Due'],
+        ['Slab Floor 10','30 Sep 2025','₹28.4L','Upcoming'],
+        ['Structure','31 Jan 2026','₹21.3L','Upcoming'],
+        ['Possession','30 Jun 2026','₹28.4L','Upcoming'],
+      ].map(([m,d,a,s])=>`<tr>
+        <td>${m}</td>
+        <td style="color:var(--c-muted)">${d}</td>
+        <td style="font-weight:700">${a}</td>
+        <td><span class="badge badge-${s==='Paid'?'ok':s==='Due'?'err':'info'}">${s}</span></td>
+      </tr>`).join('')}
+      </tbody>
+    </table></div>
+  </div>
+</div>`;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE: OCR
+═══════════════════════════════════════════ */
+function pgOCR(){
+  document.getElementById('content').innerHTML=`
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-cloud-upload"></i>Document Upload</span></div>
+    <div style="border:2px dashed var(--c-border2);border-radius:10px;padding:30px;text-align:center;cursor:pointer;margin-bottom:16px;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--c-accent)'" onmouseleave="this.style.borderColor='var(--c-border2)'" onclick="triggerOCR()">
+      <i class="ti ti-scan" style="font-size:40px;color:var(--c-muted)"></i>
+      <div style="margin-top:9px;font-size:13px;color:var(--c-muted)">Drop Aadhaar / PAN / Passport here</div>
+      <div style="font-size:11px;color:var(--c-border2);margin-top:4px">or click to upload</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px">
+      ${[['Aadhaar','Verified','var(--c-green)','ti-id'],['PAN Card','Verified','var(--c-green)','ti-id'],['Passport','Pending','var(--c-amber)','ti-passport']].map(([d,s,c,ic])=>`
+      <div style="text-align:center;background:var(--c-surface);border-radius:var(--radius);padding:11px;border:1px solid var(--c-border)">
+        <i class="ti ${ic}" style="font-size:24px;color:${c}"></i>
+        <div style="font-size:11px;font-weight:700;margin-top:5px">${d}</div>
+        <div style="font-size:10px;color:${c}">${s}</div>
+      </div>`).join('')}
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="triggerOCR()">
+      <i class="ti ti-scan"></i>Run AI OCR Extraction
+    </button>
+  </div>
+  <div class="panel">
+    <div class="panel-hdr">
+      <span class="panel-title"><i class="ti ti-file-check"></i>Extracted Fields</span>
+      <span class="badge badge-ok">Aadhaar Card</span>
+    </div>
+    <div id="ocrResult">
+    ${[
+      ['Full Name','Ramesh Kumar',98],['Date of Birth','15/08/1985',96],
+      ['Aadhaar No.','XXXX XXXX 3421',100],['Address','123, MG Road, Lucknow, UP – 226001',88],['Gender','Male',99],
+    ].map(([f,v,conf])=>`
+    <div class="ocr-field">
+      <div style="flex:1">
+        <div style="font-size:10px;color:var(--c-muted);margin-bottom:3px">${f}</div>
+        <input class="form-input" value="${v}" style="padding:5px 8px;font-size:12px;width:100%">
+      </div>
+      <span class="ocr-conf ${conf>=95?'ocr-hi':conf>=80?'ocr-med':'ocr-lo'}">${conf}%</span>
+    </div>`).join('')}
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:10px">
+      <i class="ti ti-check"></i>Auto-fill Booking Form
+    </button>
+    </div>
+  </div>
+</div>`;
+}
+
+function triggerOCR(){
+  const el=document.getElementById('ocrResult');
+  if(!el)return;
+  el.innerHTML=`<div class="loading"><i class="ti ti-loader spin"></i>AI OCR processing document…</div>`;
+  setTimeout(()=>{
+    el.innerHTML=`
+    <div class="alert alert-success" style="margin-bottom:12px"><i class="ti ti-check"></i>OCR complete — 5 fields extracted with 94.2% average confidence</div>
+    ${[['Full Name','Ramesh Kumar',98],['Date of Birth','15/08/1985',96],['Aadhaar No.','XXXX XXXX 3421',100],['Address','123, MG Road, Lucknow, UP – 226001',88],['Gender','Male',99]].map(([f,v,conf])=>`
+    <div class="ocr-field">
+      <div style="flex:1"><div style="font-size:10px;color:var(--c-muted);margin-bottom:3px">${f}</div>
+      <input class="form-input" value="${v}" style="padding:5px 8px;font-size:12px;width:100%"></div>
+      <span class="ocr-conf ${conf>=95?'ocr-hi':'ocr-med'}">${conf}%</span>
+    </div>`).join('')}
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:10px"><i class="ti ti-check"></i>Auto-fill Booking Form</button>`;
+  },1600);
+}
+
+/* ═══════════════════════════════════════════
+   PAGE: MIS
+═══════════════════════════════════════════ */
+function pgMIS(){
+  document.getElementById('content').innerHTML=`
+<div class="kpi-grid">
+  ${[
+    ['Leads MTD','284','var(--c-text)','+22%'],['Revenue MTD','₹31.4Cr','var(--c-accent)','+18%'],
+    ['Bookings','38','var(--c-teal)','+14%'],['Collections','₹4.8Cr','var(--c-amber)','+8%'],
+    ['Conv. Rate','13.4%','var(--c-purple)','+2.1pp'],['Avg Deal Size','₹82.6L','var(--c-green)','+6%'],
+  ].map(([l,v,c,ch])=>`
+  <div class="kpi-card">
+    <div class="kpi-label">${l}</div>
+    <div class="kpi-value" style="font-size:18px;color:${c}">${v}</div>
+    <div class="kpi-trend trend-up"><i class="ti ti-trending-up"></i>${ch} vs last month</div>
+  </div>`).join('')}
+</div>
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-chart-line"></i>Monthly Revenue Trend</span></div>
+    <div style="position:relative;height:188px"><canvas id="revChart" role="img" aria-label="Monthly revenue 2025">Jan ₹18Cr, Feb ₹21Cr, Mar ₹19Cr, Apr ₹24Cr, May ₹28Cr, Jun ₹31Cr</canvas></div>
+  </div>
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-chart-bar"></i>Source ROI (₹ per ₹1 spent)</span></div>
+    <div style="position:relative;height:188px"><canvas id="roiChart" role="img" aria-label="Source ROI comparison">Facebook 340, Google Ads 280, MagicBricks 180, 99Acres 140, Housing.com 120, Organic 90</canvas></div>
+  </div>
+</div>
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-users"></i>Agent Productivity</span></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Agent</th><th>Calls</th><th>Visits</th><th>Bookings</th><th>Conv%</th><th>Index</th></tr></thead>
+      <tbody>
+      ${AGENTS.map(a=>{
+        const calls=rn(40,110),visits=Math.round(calls*rn(25,45)/100),books=Math.round(visits*rn(15,35)/100),conv=Math.round(books/calls*100);
+        const c=conv>20?'green':conv>12?'amber':'red';
+        return`<tr>
+          <td><div style="display:flex;align-items:center;gap:6px">${ava(a,20,8)}${a}</div></td>
+          <td>${calls}</td><td>${visits}</td>
+          <td><strong>${books}</strong></td>
+          <td style="font-weight:700;color:var(--c-${c})">${conv}%</td>
+          <td><div style="width:65px;height:4px;background:var(--c-border);border-radius:2px"><div style="height:100%;background:var(--c-${c});width:${Math.min(conv*4,100)}%;border-radius:2px"></div></div></td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table></div>
+  </div>
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title"><i class="ti ti-chart-area"></i>Collections Forecast</span></div>
+    <div style="position:relative;height:200px"><canvas id="colChart" role="img" aria-label="Collections forecast next 6 months">Jul 4.2Cr, Aug 5.8Cr, Sep 3.9Cr, Oct 6.4Cr, Nov 7.1Cr, Dec 8.2Cr</canvas></div>
+  </div>
+</div>`;
+  setTimeout(()=>{
+    mkChart('revChart','line',['Jan','Feb','Mar','Apr','May','Jun'],[{label:'Revenue',data:[18,21,19,24,28,31],borderColor:'#4f7cff',backgroundColor:'rgba(79,124,255,.12)',fill:true,tension:.4,pointRadius:4,pointBackgroundColor:'#4f7cff'}]);
+    mkChart('roiChart','bar',SOURCES.slice(0,6),[{label:'ROI',data:[340,280,180,140,120,90],backgroundColor:['#4f7cff99','#a855f799','#14b8a699','#f59e0b99','#ef444499','#22c55e99'],borderRadius:4}]);
+    mkChart('colChart','bar',['Jul','Aug','Sep','Oct','Nov','Dec'],[{label:'Collections',data:[4.2,5.8,3.9,6.4,7.1,8.2],backgroundColor:'rgba(245,158,11,.55)',borderColor:'#f59e0b',borderWidth:1.5,borderRadius:4}]);
+  },180);
+}
+
+/* ═══════════════════════════════════════════
+   PAGE: AI INSIGHTS
+═══════════════════════════════════════════ */
+function pgAI(){
+  const insights=[
+    {t:'High Intent Lead Inactive 48h',d:'Ramesh Kumar (Score: 87) has not been contacted in 48 hours. Last action: WhatsApp delivered, unread. Recommend immediate callback.',p:'Critical',c:'red',ic:'ti-flame'},
+    {t:'Tower B Inventory Moving Fastest',d:'Tower B velocity is 2.4× Tower A. 18 units sold in 15 days vs avg of 8. Consider premium pricing adjustment on remaining units.',p:'Opportunity',c:'green',ic:'ti-trending-up'},
+    {t:'Agent Below Team Average',d:'Deepak Joshi conversion rate (8%) is 40% below team average (13.4%). Recommend coaching session and workload review.',p:'Action Needed',c:'amber',ic:'ti-user-exclamation'},
+    {t:'Facebook Campaigns Highest ROI',d:'Facebook Ads generating ₹340 per ₹1 spent vs ₹180 for Google Ads. Consider reallocating 20% budget from Google to Facebook.',p:'Insight',c:'accent',ic:'ti-chart-bar'},
+    {t:'Luxury Segment Undersupplied',d:'14 high-budget leads (₹2Cr+) have no matching available inventory in Tower A. Consider advancing Tower B luxury units to market.',p:'Alert',c:'purple',ic:'ti-alert-circle'},
+    {t:'Payment Default Risk Detected',d:'3 buyers have missed 2+ consecutive payment reminders. Total exposure: ₹42L. Recommend legal notice generation and escalation.',p:'Urgent',c:'red',ic:'ti-alert-triangle'},
+  ];
+  document.getElementById('content').innerHTML=`
+<div style="background:linear-gradient(135deg,rgba(79,124,255,.1),rgba(168,85,247,.1));border:1px solid rgba(79,124,255,.28);border-radius:var(--radius-lg);padding:14px 18px;display:flex;align-items:center;gap:13px;margin-bottom:18px">
+  <i class="ti ti-brain" style="font-size:26px;color:var(--c-accent)"></i>
+  <div>
+    <div style="font-size:15px;font-weight:800">PropOS AI Intelligence Engine</div>
+    <div style="font-size:11px;color:var(--c-muted)">6 active insights • Last refreshed 2 min ago • Analyzing 108 leads + 288 inventory units + 12 months data</div>
+  </div>
+  <button class="btn btn-primary" style="margin-left:auto"><i class="ti ti-refresh"></i>Refresh Insights</button>
+</div>
+${insights.map((ins,idx)=>`
+<div class="ai-card">
+  <div style="display:flex;align-items:flex-start;gap:12px">
+    <div style="width:38px;height:38px;border-radius:9px;background:rgba(${ins.c==='red'?'239,68,68':ins.c==='green'?'34,197,94':ins.c==='amber'?'245,158,11':ins.c==='accent'?'79,124,255':'168,85,247'},.18);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <i class="ti ${ins.ic}" style="font-size:17px;color:var(--c-${ins.c})"></i>
+    </div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px;flex-wrap:wrap">
+        <div style="font-weight:800;font-size:14px">${ins.t}</div>
+        <span class="badge" style="background:rgba(${ins.c==='red'?'239,68,68':ins.c==='green'?'34,197,94':ins.c==='amber'?'245,158,11':ins.c==='accent'?'79,124,255':'168,85,247'},.18);color:var(--c-${ins.c})">${ins.p}</span>
+      </div>
+      <div style="font-size:12px;color:var(--c-muted);line-height:1.55">${ins.d}</div>
+    </div>
+    <div style="display:flex;gap:6px;flex-shrink:0">
+      <button class="btn btn-ghost btn-sm">Dismiss</button>
+      <button class="btn btn-primary btn-sm">Take Action</button>
+    </div>
+  </div>
+</div>`).join('')}`;
+}
+
+/* ═══════════════════════════════════════════
+   MODAL UTILITY
+═══════════════════════════════════════════ */
+function modal(title,body){
+  const ov=document.createElement('div');
+  ov.className='overlay';
+  ov.id='modalOv';
+  ov.addEventListener('click',e=>{if(e.target===ov)closeModal();});
+  ov.innerHTML=`<div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">${title}</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    ${body}
+  </div>`;
+  document.body.appendChild(ov);
+}
+
+function closeModal(){
+  document.getElementById('modalOv')?.remove();
+}
+
+/* ═══════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════ */
+renderLogin();
+</script>
+</body>
+</html>
